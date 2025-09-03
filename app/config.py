@@ -24,6 +24,7 @@ TRANSITION_MARKERS = [
     "Signalons aussi un événement marquant.",
     "Côté sportif, on annonce que",
     "Dans le registre culturel",
+    "En guise de conclusion."
     "Côté associations, on note que",
     "Au sujet des infrastructures",
     "Partons à présent à la découverte d'une figure historique :",
