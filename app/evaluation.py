@@ -36,34 +36,33 @@ def evaluate_thematic_cohesion(
     min_threshold: float = 0.25,
     min_difference: float = 0.05,
     tolerance: float = 1e-3
-) -> bool:
+) -> tuple[bool, str | None]:
     """Evaluate if a transition demonstrates good thematic cohesion."""
     if next_similarity < min_threshold:
-        logging.info(f"[COHESION FAIL] Next similarity too low: {next_similarity:.3f} < {min_threshold}")
-        return False
+        reason = f"Next similarity too low ({next_similarity:.2f} < {min_threshold})"
+        logging.info(f"[COHESION FAIL] {reason}")
+        return False, reason
 
     difference = next_similarity - prev_similarity
     if difference + tolerance < min_difference:
-        logging.info(
-            f"[COHESION FAIL] Insufficient forward bias: "
-            f"next={next_similarity:.3f}, prev={prev_similarity:.3f}, diff={difference:.3f}"
+        reason = (
+            f"Insufficient forward bias: next={next_similarity:.2f}, "
+            f"prev={prev_similarity:.2f}, diff={difference:.2f}"
         )
-        return False
+        logging.info(f"[COHESION FAIL] {reason}")
+        return False, reason
 
-    # Concluding transitions: require some forward connection
     if any(normalize(marker) in normalize(transition) for marker in ["finir", "terminer"]):
         if next_similarity + tolerance < 0.2:
-            logging.info(
-                f"[COHESION FAIL] Concluding transition needs stronger forward connection: {next_similarity:.3f}"
-            )
-            return False
+            reason = f"Concluding transition needs stronger forward connection: {next_similarity:.2f}"
+            logging.info(f"[COHESION FAIL] {reason}")
+            return False, reason
 
     logging.info(
         f"[COHESION PASS] Good thematic cohesion: "
         f"next={next_similarity:.3f}, prev={prev_similarity:.3f}, diff={difference:.3f}"
     )
-    return True
-
+    return True, None
 
 def evaluate_article(raw_text: str, article_id: str) -> tuple[pd.DataFrame, dict]:
     """
@@ -155,9 +154,15 @@ def evaluate_article(raw_text: str, article_id: str) -> tuple[pd.DataFrame, dict
                 transition_text, similarity_prev or 0, similarity_next or 0
             ):
                 pass_fail = "Fail"
-                failure_reasons.append(
-                    f"Next similarity too low ({similarity_next:.2f} < 0.25)"
-                )
+                if similarity_next < 0.25:
+                    failure_reasons.append(
+                        f"Next similarity too low ({similarity_next:.2f} < 0.25)"
+                    )
+                else:
+                    diff = (similarity_next or 0) - (similarity_prev or 0)
+                    failure_reasons.append(
+                        f"Insufficient forward bias (diff={diff:.2f}, next={similarity_next:.2f}, prev={similarity_prev:.2f})"
+                    )
                 triggered_rules.append("LOW_SIMILARITY")
 
             if similarity_prev > 0.9:
