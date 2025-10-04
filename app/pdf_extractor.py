@@ -17,7 +17,7 @@ def extract_text_from_pdf(file) -> str:
         ValueError: If the PDF is invalid or no text is extracted.
     """
     try:
-        # Reset file pointer to start (Streamlit files may have been read partially)
+        # Reset file pointer to start
         file.seek(0)
         data = file.read()
         
