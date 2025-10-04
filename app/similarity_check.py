@@ -22,7 +22,7 @@ def _clean_for_similarity(text: str) -> str:
     if not text:
         return ""
     text = normalize(text).lower().strip()
-    text = re.sub(r"[^\w\sàâäéèêëîïôöùûüç]", " ", text)  # stricter punctuation removal
+    text = re.sub(r"[^\w\sàâäéèêëîïôöùûüç]", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
@@ -78,7 +78,7 @@ def compute_transition_similarity(transition: str, prev_paragraph: str, next_par
     prev_similarity = compute_similarity(transition, prev_paragraph, use_semantic_extraction=True)
     next_similarity = compute_similarity(transition, next_paragraph, use_semantic_extraction=True)
 
-    # Safety clamp (force everything into [0,1])
+    # Safety clamp
     prev_similarity = max(0.0, min(1.0, prev_similarity))
     next_similarity = max(0.0, min(1.0, next_similarity))
 
