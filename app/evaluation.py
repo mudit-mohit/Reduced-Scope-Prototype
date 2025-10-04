@@ -111,7 +111,7 @@ def evaluate_article(raw_text: str, article_id: str) -> tuple[pd.DataFrame, dict
         similarity_prev = None
         similarity_next = None
 
-        # Rule 1: Word limit check (always applied)
+        # Rule 1: Word limit check
         words = [
             w.strip()
             for w in re.split(r"\s+", transition_text)
@@ -126,7 +126,7 @@ def evaluate_article(raw_text: str, article_id: str) -> tuple[pd.DataFrame, dict
             )
             triggered_rules.append("WORD_LIMIT")
 
-        # Rule 2: Lemma repetition check (skipped for known markers)
+        # Rule 2: Lemma repetition check
         if not is_known_marker(transition_text):
             transition_lemmas = lemmatize_text(transition_text)
             repeated_lemmas = [
@@ -141,7 +141,7 @@ def evaluate_article(raw_text: str, article_id: str) -> tuple[pd.DataFrame, dict
                 )
                 triggered_rules.append("REPEATED_LEMMAS")
 
-        # Rule 3: Thematic cohesion (always applied)
+        # Rule 3: Thematic cohesion
         prev_para = paragraphs[para_idx - 2] if para_idx - 2 >= 0 else None
         next_para = paragraphs[para_idx] if para_idx < len(paragraphs) else None
 
