@@ -79,17 +79,17 @@ logger = logging.getLogger(__name__)
 
 def detect_transitions(blocks: List[str]) -> Tuple[List[TransitionRecord], List[str]]:
     """
-    Detect transitions with absolute sequential paragraph indices (no skipping).
+    Detect transitions with absolute sequential paragraph indices.
     """
     transitions: List[TransitionRecord] = []
     new_content_blocks: List[str] = []
-    content_counter = 0  # absolute paragraph index
+    content_counter = 0
 
     for raw_idx, blk in enumerate(blocks):
         blk_stripped = blk.strip()
         blk_lower = blk_stripped.lower()
 
-        # Skip metadata (no index increment)
+        # Skip metadata
         if blk_lower.startswith(("titre:", "chapeau:")):
             logger.debug(f"[SKIP META] raw_idx={raw_idx}, blk='{blk[:40]}...'")
             continue
