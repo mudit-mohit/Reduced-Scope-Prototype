@@ -1,4 +1,4 @@
-MAX_TRANSITION_WORDS = 5  # still used for heuristic detection of unknown markers
+MAX_TRANSITION_WORDS = 5
 
 LEMMA_REPEAT_MIN = 3
 
